@@ -160,7 +160,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
 .category-nav a { padding: 17px 0 15px; flex-shrink: 0; font-size: 12px; font-weight: 500; color: var(--muted-foreground); text-decoration: none; border-bottom: 2px solid transparent; transition: color .2s; }
 .category-nav a:hover, .category-nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-/* Restored original hero size, added overflow:hidden, and zoomed the image */
+/* Restored hero size. Using transform scale to zoom in perfectly from the center */
 .logo-hero { 
   height: 270px; 
   display: grid; 
@@ -170,10 +170,11 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
   overflow: hidden; 
 }
 .hero-logo { 
-  width: 150%; 
-  max-width: none; 
+  width: 100%; 
+  max-width: 800px; /* Normal width constraint */
   height: auto; 
-  object-fit: cover; 
+  object-fit: contain; 
+  transform: scale(1.15); /* Zooms in 15% from the center without breaking layout */
 }
 
 .menu-content { max-width: 1056px; margin: 0 auto; padding: 44px 0 80px; }
@@ -222,9 +223,9 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
   .category-nav { gap: 22px; padding: 0 20px; }
   .category-nav a { font-size: 11px; padding: 14px 0 12px; }
   
-  /* Restored mobile hero size with zoom */
+  /* Mobile hero with scale zoom */
   .logo-hero { height: 207px; margin: 0 20px; overflow: hidden; }
-  .hero-logo { width: 150%; max-width: none; height: auto; }
+  .hero-logo { max-width: 90%; transform: scale(1.1); }
   
   .menu-content { margin: 0 20px; padding: 30px 0 48px; }
   .section-intro { margin-bottom: 21px; }
