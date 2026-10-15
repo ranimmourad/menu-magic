@@ -160,21 +160,20 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
 .category-nav a { padding: 17px 0 15px; flex-shrink: 0; font-size: 12px; font-weight: 500; color: var(--muted-foreground); text-decoration: none; border-bottom: 2px solid transparent; transition: color .2s; }
 .category-nav a:hover, .category-nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-/* Updated Hero Logo to shrink-wrap the image and stretch it wide */
+/* Restored original hero size, added overflow:hidden, and zoomed the image */
 .logo-hero { 
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
-  width: 100%; 
-  padding: 1.5rem 2rem; /* Reduced padding to minimize white space */
+  height: 270px; 
+  display: grid; 
+  place-items: center; 
   border-bottom: 1px solid var(--border); 
-  box-sizing: border-box; 
+  margin: 0 32px; 
+  overflow: hidden; 
 }
 .hero-logo { 
-  width: 100%; 
-  max-width: 1200px; /* Stretches the image very wide so the text fills the screen */
+  width: 150%; 
+  max-width: none; 
   height: auto; 
-  object-fit: contain; 
+  object-fit: cover; 
 }
 
 .menu-content { max-width: 1056px; margin: 0 auto; padding: 44px 0 80px; }
@@ -223,9 +222,9 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
   .category-nav { gap: 22px; padding: 0 20px; }
   .category-nav a { font-size: 11px; padding: 14px 0 12px; }
   
-  /* Updated mobile hero */
-  .logo-hero { padding: 1rem 1.5rem; }
-  .hero-logo { max-width: 100%; }
+  /* Restored mobile hero size with zoom */
+  .logo-hero { height: 207px; margin: 0 20px; overflow: hidden; }
+  .hero-logo { width: 150%; max-width: none; height: auto; }
   
   .menu-content { margin: 0 20px; padding: 30px 0 48px; }
   .section-intro { margin-bottom: 21px; }
