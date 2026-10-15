@@ -3,8 +3,9 @@ import { useEffect, useState } from 'react';
 import { ArrowDown, ArrowUp, ArrowUpRight, Download, Grid2X2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { categories, formatPrice } from '@/lib/menu';
-import logo from '@/assets/mabillon-logo.png.asset.json';
-import menuPdf from '@/assets/carte-mabillon.pdf.asset.json';
+// FIX: Import the assets directly. Vite handles this natively.
+import logo from '@/assets/mabillon-logo.png';
+import menuPdf from '@/assets/carte-mabillon.pdf';
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -35,12 +36,13 @@ function Index() {
     <div id="top">
       <header className="site-header">
         <div className="header-top">
-          <a href="#top" aria-label="Le Mabillon — accueil"><img className="header-logo" src={logo.url} alt="Le Mabillon Resto & Café" width={400} height={134} /></a>
-          <div className="header-actions"><span className="menu-label">Resto & Café · Tunis</span><Button asChild variant="ghost" size="icon"><a href={menuPdf.url} target="_blank" rel="noreferrer" aria-label="Ouvrir la carte PDF" title="La carte en PDF"><Download /></a></Button></div>
+          {/* FIX: Use `logo` directly instead of `logo.url` */}
+          <a href="#top" aria-label="Le Mabillon — accueil"><img className="header-logo" src={logo} alt="Le Mabillon Resto & Café" width={400} height={134} /></a>
+          <div className="header-actions"><span className="menu-label">Resto & Café · Tunis</span><Button asChild variant="ghost" size="icon"><a href={menuPdf} target="_blank" rel="noreferrer" aria-label="Ouvrir la carte PDF" title="La carte en PDF"><Download /></a></Button></div>
         </div>
         <div className="nav-wrap"><nav className="category-nav" aria-label="Catégories du menu">{categories.map(category => <a key={category.id} href={`#${category.id}`} className={active === category.id ? 'active' : ''} aria-current={active === category.id ? 'location' : undefined}>{category.name}</a>)}</nav></div>
       </header>
-      <div className="logo-hero"><img className="hero-logo" src={logo.url} alt="Le Mabillon Resto & Café" width={400} height={134} fetchPriority="high" /></div>
+      <div className="logo-hero"><img className="hero-logo" src={logo} alt="Le Mabillon Resto & Café" width={400} height={134} fetchPriority="high" /></div>
       <main className="menu-content">
         <div className="section-intro"><div><p className="eyebrow">À la carte</p><h1>Notre menu</h1></div><span className="category-count"><Grid2X2 size={13} />12 catégories</span></div>
         <div className="category-grid" id="categories">{categories.map((category, index) => <a className="category-tile" href={`#${category.id}`} key={category.id} aria-label={`Voir ${category.name}`}>
@@ -53,7 +55,7 @@ function Index() {
           <div className="menu-groups">{category.groups.map(group => <div key={group.name} className="menu-group">{(category.groups.length > 1 || group.name !== category.name) && <h3>{group.name}</h3>}<div className="menu-items">{group.items.map((item, itemIndex) => <div key={`${item.name}-${itemIndex}`} className="menu-item"><div className="item-row"><h4>{item.name}</h4><p className="item-price">{formatPrice(item.price)}<span>DT</span></p></div>{item.description && <p>{item.description}</p>}</div>)}</div></div>)}</div>
         </section>)}
       </main>
-      <footer className="site-footer"><a href="#top" aria-label="Retour en haut"><img src={logo.url} alt="Le Mabillon" width={400} height={134} loading="lazy" /></a><address>17 rue Abdelaziz Mastouri<br />1013 Menzah 9, Tunis</address><p className="photo-note">Prix en dinars tunisiens · Photos d’illustration</p></footer>
+      <footer className="site-footer"><a href="#top" aria-label="Retour en haut"><img src={logo} alt="Le Mabillon" width={400} height={134} loading="lazy" /></a><address>17 rue Abdelaziz Mastouri<br />1013 Menzah 9, Tunis</address><p className="photo-note">Prix en dinars tunisiens · Photos d’illustration</p></footer>
       {showTop && <Button asChild variant="default" size="icon" className="back-top"><a href="#categories" aria-label="Retour aux catégories" title="Retour aux catégories"><ArrowUp /></a></Button>}
     </div>
   );
