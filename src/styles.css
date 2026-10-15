@@ -178,7 +178,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
 .menu-divider { padding: 75px 0 38px; text-align: center; }
 .menu-divider p { font-family: var(--font-display); font-size: 34px; }
 .menu-divider::before { content: ''; display: block; width: 38px; height: 1px; background: var(--primary); margin: 0 auto 24px; }
-.menu-section { padding: 34px 0 46px; border-top: 1px solid var(--border); scroll-margin-top: 130px; }
+.menu-section { padding: 34px 0 46px; border-top: 1px solid var(--border); }
 .menu-section-header { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 16px; align-items: center; margin-bottom: 32px; }
 .menu-section-header h2 { font-family: var(--font-display); font-size: 39px; line-height: 1.1; }
 .section-number { font-size: 11px; color: var(--primary); margin-bottom: 8px; }
@@ -192,7 +192,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
 .item-row h4 { font-weight: 500; font-size: 14px; line-height: 1.5; }
 .item-price { white-space: nowrap; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .item-price span { font-size: 10px; margin-left: 3px; font-weight: 400; color: var(--muted-foreground); }
-.menu-item p { margin-top: 5px; color: var(--muted-foreground); font-size: 12px; line-height: 1.65; max-width: 90%; }
+.menu-item > p { margin-top: 5px; color: var(--muted-foreground); font-size: 12px; line-height: 1.65; max-width: 90%; }
 .site-footer { border-top: 1px solid var(--border); background: var(--muted); padding: 40px 24px; text-align: center; }
 .site-footer img { width: 170px; margin: 0 auto 20px; }
 .site-footer address { font-style: normal; font-size: 12px; line-height: 1.8; color: var(--muted-foreground); }
@@ -222,7 +222,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
   .tile-arrow svg { width: 12px; }
   .menu-divider { padding: 49px 0 28px; }
   .menu-divider p { font-size: 29px; }
-  .menu-section { padding: 27px 0 36px; scroll-margin-top: 112px; }
+  .menu-section { padding: 27px 0 36px; }
   .menu-section-header { margin-bottom: 24px; }
   .menu-section-header h2 { font-size: 32px; }
   .section-thumbnail { width: 74px; height: 68px; }
