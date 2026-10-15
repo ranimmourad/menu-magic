@@ -8,3 +8,8 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Menu architecture
+- Keep the complete menu in the browser-safe `src/lib/menu.ts` data module; the page renders both navigation and sections from the same categories to prevent drift.
+- Use hash anchors for this explicitly requested single-page menu; category cards and navbar links must target the same section IDs.
+- Keep all reusable visual styling and semantic palette tokens in `src/styles.css` so the mobile-first layout remains consistent.
