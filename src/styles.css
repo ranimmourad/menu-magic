@@ -160,12 +160,12 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
 .category-nav a { padding: 17px 0 15px; flex-shrink: 0; font-size: 12px; font-weight: 500; color: var(--muted-foreground); text-decoration: none; border-bottom: 2px solid transparent; transition: color .2s; }
 .category-nav a:hover, .category-nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-/* Updated: Lifted logo to the top of the container and scaled downward */
+/* Hero section: centered, but image is pulled up using margin-top */
 .logo-hero { 
   height: 270px; 
-  display: grid; 
-  align-items: start; /* Lifts the logo up */
-  justify-items: center;
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
   border-bottom: 1px solid var(--border); 
   margin: 0 32px; 
   overflow: hidden; 
@@ -176,7 +176,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
   height: auto; 
   object-fit: contain; 
   transform: scale(1.15); 
-  transform-origin: top center; /* Scales downward so it doesn't get cropped at the top */
+  margin-top: -60px; /* Pulls the logo up into the empty space */
 }
 
 .menu-content { max-width: 1056px; margin: 0 auto; padding: 44px 0 80px; }
@@ -225,9 +225,9 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
   .category-nav { gap: 22px; padding: 0 20px; }
   .category-nav a { font-size: 11px; padding: 14px 0 12px; }
   
-  /* Mobile hero lifted up */
-  .logo-hero { height: 207px; margin: 0 20px; overflow: hidden; align-items: start; }
-  .hero-logo { max-width: 90%; transform: scale(1.1); transform-origin: top center; }
+  /* Mobile hero with upward margin */
+  .logo-hero { height: 207px; margin: 0 20px; overflow: hidden; }
+  .hero-logo { max-width: 90%; transform: scale(1.1); margin-top: -40px; }
   
   .menu-content { margin: 0 20px; padding: 30px 0 48px; }
   .section-intro { margin-bottom: 21px; }
