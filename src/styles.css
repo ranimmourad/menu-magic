@@ -151,7 +151,13 @@
 html { scroll-behavior: smooth; scroll-padding-top: 132px; }
 .site-header { position: sticky; top: 0; z-index: 30; background: var(--background); border-bottom: 1px solid var(--border); }
 .header-top { max-width: 1120px; margin: auto; height: 68px; padding: 0 32px; display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; }
-.header-logo { width: 150px; height: 50px; object-fit: contain; }
+.header-logo { 
+  width: 150px; 
+  height: 50px; 
+  object-fit: contain; 
+  transform: scale(2); /* Zooms in exactly 2 times */
+  transform-origin: center; /* Zooms from the center */
+}
 .header-actions { display: flex; gap: 12px; align-items: center; }
 .menu-label { text-transform: uppercase; font-size: 10px; letter-spacing: 2px; color: var(--muted-foreground); }
 .nav-wrap { border-top: 1px solid var(--muted); }
@@ -230,7 +236,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
 @media (max-width: 640px) {
   html { scroll-padding-top: 112px; }
   .header-top { height: 59px; padding: 0 20px; }
-  .header-logo { width: 125px; height: 44px; }
+  .header-logo { width: 125px; height: 44px; transform: scale(1.5); }
   .menu-label { display: none; }
   .category-nav { gap: 22px; padding: 0 20px; }
   .category-nav a { font-size: 11px; padding: 14px 0 12px; }
