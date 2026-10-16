@@ -1,3 +1,13 @@
+import r_formules from '@/assets/r-formules.jpg';
+import r_jus from '@/assets/r-jus.jpg';
+import r_milkshakes from '@/assets/r-milkshakes.jpg';
+import r_patisseries from '@/assets/r-patisseries.jpg';
+import r_viennoiseries from '@/assets/r-viennoiseries.jpg';
+import r_glaces from '@/assets/r-glaces.jpg';
+import r_paninis from '@/assets/r-paninis.jpg';
+import r_croques from '@/assets/r-croques.jpg';
+import r_baguettes from '@/assets/r-baguettes.jpg';
+import r_makloub from '@/assets/r-makloub.jpg';
 import breakfast from '@/assets/cafe-0.jpg';
 import coffee from '@/assets/cafe-1.jpg';
 import drinks from '@/assets/cafe-2.jpg';
@@ -48,5 +58,6 @@ const rawCategories = [
   ])] },
 ];
 const slug = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/œ/g, 'oe').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const overrides: Record<string, string> = { 'formules-gourmandes': r_formules, 'jus-de-fruits-smoothies': r_jus, 'milk-shakes': r_milkshakes, 'patisseries': r_patisseries, 'viennoiseries': r_viennoiseries, 'glaces': r_glaces, 'paninis': r_paninis, 'croques': r_croques, 'baguettes-farcies': r_baguettes, 'makloub': r_makloub };
 // Each rubrique of the printed carte becomes its own category.
-export const categories = rawCategories.flatMap(c => c.groups.map(g => ({ id: slug(g.name), name: g.name, image: c.image, groups: [g] })));
+export const categories = rawCategories.flatMap(c => c.groups.map(g => ({ id: slug(g.name), name: g.name, image: overrides[slug(g.name)] ?? c.image, groups: [g] })));
