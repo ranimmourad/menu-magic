@@ -34,13 +34,11 @@ function Index() {
     <div id="top">
       <header className="site-header">
         <div className="header-top">
-          {/* Logo restored in navbar */}
           <a href="#top" aria-label="Le Mabillon — accueil">
             <img className="header-logo" src={logo} alt="Le Mabillon Resto & Café" />
           </a>
           <div className="header-actions">
             <span className="menu-label">Resto & Café · Tunis</span>
-            {/* Download button removed */}
           </div>
         </div>
         <div className="nav-wrap">
@@ -60,7 +58,7 @@ function Index() {
             <p className="eyebrow">À la carte</p>
             <h1>Notre menu</h1>
           </div>
-          <span className="category-count"><Grid2X2 size={13} />12 catégories</span>
+          <span className="category-count"><Grid2X2 size={13} />{categories.length} catégories</span>
         </div>
         <div className="category-grid" id="categories">
           {categories.map((category, index) => 
