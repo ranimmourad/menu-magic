@@ -15,7 +15,7 @@ export type MenuItem = { name: string; price: number; description?: string };
 type Row = [string, number, string?];
 const group = (name: string, rows: Row[]) => ({ name, items: rows.map(([name, price, description]) => ({ name, price, description })) });
 export const formatPrice = (price: number) => new Intl.NumberFormat('fr-TN', { maximumFractionDigits: 1 }).format(price);
-export const categories = [
+const rawCategories = [
   { id: 'petits-dejeuners', name: 'Petits déjeuners', image: breakfast, groups: [group('Petits déjeuners', [
     ['Basique',8,'Café, jus, ½ eau, viennoiserie'],['Week End',11.5,'Café, jus, ½ eau, viennoiserie, omelette'],['Belge',11.5,'Café, jus, ½ eau, viennoiserie, crêpe'],['Tunisien',16,'Café, jus, ½ eau, mlawi, ricotta miel, chamia, mtabga, ojja'],['Tout salé',22,"Café, jus, ½ eau, omelette, pain farci, assiette charcuterie-fromages, œufs à l’italienne"],['Complet',20,'Café, jus, ½ eau, viennoiserie, pancake, omelette, assiette charcuterie-fromage'],['Américain',22,'Café, jus, ½ eau, viennoiserie, pancake, breakfast sandwich, œufs au bacon, assiette charcuterie-fromage']
   ]),group('Formules gourmandes', [['Café gourmand',11,'Pâtisserie + café'],['Hiver glacé',11.5,'Pâtisserie + chocolat chaud'],['Tonus sucré',11.5,'Pâtisserie + jus de fruits']])] },
@@ -47,3 +47,6 @@ export const categories = [
     ['Poisson grillé',17],['Fish and chips',18],['Poulet au grill',17],['Gratin de fruits de mer',25],['Complet escalope',17,'Escalope grillée, œuf au plat, salade, riz ou pâtes, frites'],['Complet escalope panée',18.5],['Complet Cordon bleu',20],['Complet Steak',20],['Émincé de poulet',17,'Oignons, poivrons et champignons'],['Émincé de veau',21,'Oignons, poivrons et champignons'],['Escalope de poulet à la crème',18,'Sauce moutarde, poivre ou champignons'],['Steak à la crème',24,'Sauce moutarde, poivre ou champignons']
   ])] },
 ];
+const slug = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/œ/g, 'oe').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+// Each rubrique of the printed carte becomes its own category.
+export const categories = rawCategories.flatMap(c => c.groups.map(g => ({ id: slug(g.name), name: g.name, image: c.image, groups: [g] })));
