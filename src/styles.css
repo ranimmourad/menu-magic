@@ -151,7 +151,7 @@
 html { scroll-behavior: smooth; scroll-padding-top: 132px; }
 .site-header { position: sticky; top: 0; z-index: 30; background: var(--background); border-bottom: 1px solid var(--border); }
 .header-top { max-width: 1120px; margin: auto; height: 68px; padding: 0 32px; display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; }
-.header-brand { font-family: var(--font-display); font-size: 24px; font-weight: 500; text-decoration: none; color: var(--foreground); }
+.header-logo { width: 150px; height: 50px; object-fit: contain; }
 .header-actions { display: flex; gap: 12px; align-items: center; }
 .menu-label { text-transform: uppercase; font-size: 10px; letter-spacing: 2px; color: var(--muted-foreground); }
 .nav-wrap { border-top: 1px solid var(--muted); }
@@ -160,7 +160,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
 .category-nav a { padding: 17px 0 15px; flex-shrink: 0; font-size: 12px; font-weight: 500; color: var(--muted-foreground); text-decoration: none; border-bottom: 2px solid transparent; transition: color .2s; }
 .category-nav a:hover, .category-nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-/* Hero section: centered, but image is pulled up using margin-top */
+/* Hero section */
 .logo-hero { 
   height: 270px; 
   display: flex; 
@@ -176,7 +176,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
   height: auto; 
   object-fit: contain; 
   transform: scale(1.15); 
-  margin-top: -60px; /* Pulls the logo up into the empty space */
+  margin-top: -60px; 
 }
 
 .menu-content { max-width: 1056px; margin: 0 auto; padding: 44px 0 80px; }
@@ -212,7 +212,17 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
 .item-price span { font-size: 10px; margin-left: 3px; font-weight: 400; color: var(--muted-foreground); }
 .menu-item > p { margin-top: 5px; color: var(--muted-foreground); font-size: 12px; line-height: 1.65; max-width: 90%; }
 .site-footer { border-top: 1px solid var(--border); background: var(--muted); padding: 40px 24px; text-align: center; }
-.site-footer img { width: 170px; margin: 0 auto 20px; }
+
+/* Footer logo zoomed in */
+.footer-logo { 
+  width: 260px; 
+  max-width: 70%; 
+  height: auto; 
+  margin: 0 auto 20px; 
+  object-fit: contain; 
+  transform: scale(1.25); 
+}
+
 .site-footer address { font-style: normal; font-size: 12px; line-height: 1.8; color: var(--muted-foreground); }
 .site-footer .photo-note { font-size: 10px; color: var(--muted-foreground); margin-top: 20px; }
 .back-top { position: fixed; bottom: 24px; right: 24px; z-index: 20; box-shadow: var(--soft-shadow); }
@@ -220,12 +230,12 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
 @media (max-width: 640px) {
   html { scroll-padding-top: 112px; }
   .header-top { height: 59px; padding: 0 20px; }
-  .header-brand { font-size: 20px; }
+  .header-logo { width: 125px; height: 44px; }
   .menu-label { display: none; }
   .category-nav { gap: 22px; padding: 0 20px; }
   .category-nav a { font-size: 11px; padding: 14px 0 12px; }
   
-  /* Mobile hero with upward margin */
+  /* Mobile hero */
   .logo-hero { height: 207px; margin: 0 20px; overflow: hidden; }
   .hero-logo { max-width: 90%; transform: scale(1.1); margin-top: -40px; }
   
@@ -250,6 +260,10 @@ html { scroll-behavior: smooth; scroll-padding-top: 132px; }
   .menu-groups { grid-template-columns: minmax(0,1fr); gap: 30px; }
   .menu-group:only-child .menu-items { display: block; }
   .menu-item { padding: 15px 0; }
+  
+  /* Mobile footer */
+  .footer-logo { max-width: 80%; transform: scale(1.1); }
+  
   .back-top { right: 17px; bottom: 17px; }
 }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::after { transition: none !important; } }
