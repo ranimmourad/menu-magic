@@ -1,10 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from 'react';
-import { ArrowUp, ArrowUpRight, Download, Grid2X2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpRight, Grid2X2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { categories, formatPrice } from '@/lib/menu';
 import logo from '@/assets/mabillon-logo.png';
-import menuPdf from '@/assets/carte-mabillon.pdf';
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -22,29 +21,26 @@ function Index() {
   const [active, setActive] = useState('');
   const [showTop, setShowTop] = useState(false);
   useEffect(() => {
-    const onHash = () => setActive(window.location.hash.slice(1));
-    const onScroll = () => setShowTop(window.scrollY > 600);
-    onHash(); onScroll();
-    window.addEventListener('hashchange', onHash);
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) if (entry.isIntersecting) setActive(entry.target.id);
+    }, { rootMargin: '-120px 0px -60% 0px', threshold: 0 });
+    document.querySelectorAll('.menu-section').forEach(section => observer.observe(section));
+    const onScroll = () => { setShowTop(window.scrollY > 600); if (window.scrollY < 400) setActive(''); };
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => { window.removeEventListener('hashchange', onHash); window.removeEventListener('scroll', onScroll); };
+    onScroll();
+    return () => { observer.disconnect(); window.removeEventListener('scroll', onScroll); };
   }, []);
-  useEffect(() => {
-    if (active && active !== 'top' && active !== 'categories') document.getElementById(active)?.scrollIntoView({ behavior: 'smooth' });
-  }, [active]);
   return (
     <div id="top">
       <header className="site-header">
         <div className="header-top">
-          {/* Logo removed from navbar and replaced with text link */}
-          <a href="#top" aria-label="Le Mabillon — accueil" className="header-brand">Le Mabillon</a>
+          {/* Logo restored in navbar */}
+          <a href="#top" aria-label="Le Mabillon — accueil">
+            <img className="header-logo" src={logo} alt="Le Mabillon Resto & Café" />
+          </a>
           <div className="header-actions">
             <span className="menu-label">Resto & Café · Tunis</span>
-            <Button asChild variant="ghost" size="icon">
-              <a href={menuPdf} target="_blank" rel="noreferrer" aria-label="Ouvrir la carte PDF" title="La carte en PDF">
-                <Download />
-              </a>
-            </Button>
+            {/* Download button removed */}
           </div>
         </div>
         <div className="nav-wrap">
@@ -54,7 +50,6 @@ function Index() {
         </div>
       </header>
       
-      {/* Hero Logo Section */}
       <div className="logo-hero">
         <img className="hero-logo" src={logo} alt="Le Mabillon Resto & Café" fetchPriority="high" />
       </div>
@@ -65,7 +60,7 @@ function Index() {
             <p className="eyebrow">À la carte</p>
             <h1>Notre menu</h1>
           </div>
-          <span className="category-count"><Grid2X2 size={13} />{categories.length} rubriques</span>
+          <span className="category-count"><Grid2X2 size={13} />12 catégories</span>
         </div>
         <div className="category-grid" id="categories">
           {categories.map((category, index) => 
@@ -82,11 +77,16 @@ function Index() {
           )}
         </div>
         
-        {categories.filter(c => c.id === active).map((category, index) => 
+        <div className="menu-divider">
+          <p>La carte du Mabillon</p>
+          <ArrowDown size={16} className="mx-auto mt-3 text-primary" />
+        </div>
+
+        {categories.map((category, index) => 
           <section id={category.id} key={category.id} className="menu-section" aria-labelledby={`${category.id}-heading`}>
             <div className="menu-section-header">
               <div className="min-w-0">
-                <p className="section-number">{String(categories.indexOf(category) + 1).padStart(2, "0")} / LA CARTE</p>
+                <p className="section-number">{String(index + 1).padStart(2, '0')} / LA CARTE</p>
                 <h2 id={`${category.id}-heading`}>{category.name}</h2>
               </div>
               <img className="section-thumbnail" src={category.image} alt="" width={100} height={76} loading="lazy" />
@@ -115,7 +115,7 @@ function Index() {
 
       <footer className="site-footer">
         <a href="#top" aria-label="Retour en haut">
-          <img src={logo} alt="Le Mabillon" loading="lazy" />
+          <img className="footer-logo" src={logo} alt="Le Mabillon" loading="lazy" />
         </a>
         <address>17 rue Abdelaziz Mastouri<br />1013 Menzah 9, Tunis</address>
         <p className="photo-note">Prix en dinars tunisiens · Photos d’illustration</p>
