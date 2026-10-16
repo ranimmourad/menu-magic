@@ -86,7 +86,7 @@ function Index() {
           <section id={category.id} key={category.id} className="menu-section" aria-labelledby={`${category.id}-heading`}>
             <div className="menu-section-header">
               <div className="min-w-0">
-                <p className="section-number">{String(index + 1).padStart(2, '0')} / LA CARTE</p>
+                <p className="section-number">{String(categories.indexOf(category) + 1).padStart(2, "0")} / LA CARTE</p>
                 <h2 id={`${category.id}-heading`}>{category.name}</h2>
               </div>
               <img className="section-thumbnail" src={category.image} alt="" width={100} height={76} loading="lazy" />
