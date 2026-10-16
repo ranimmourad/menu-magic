@@ -64,7 +64,6 @@ const rawCategories = [
 
 const slug = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/œ/g, 'oe').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-// Les overrides permettent de lier vos nouvelles images aux sous-rubriques séparées
 const overrides: Record<string, string> = { 
   'formules-gourmandes': r_formules, 
   'jus-de-fruits-smoothies': r_jus, 
@@ -79,5 +78,5 @@ const overrides: Record<string, string> = {
   'boissons-fraiches': boissonsFraichesImg 
 };
 
-// Chaque sous-groupe devient sa propre rubrique distincte sur le site
+// C'est cette ligne qui MAGNÉTISE chaque sous-groupe dans sa propre rubrique indépendante
 export const categories = rawCategories.flatMap(c => c.groups.map(g => ({ id: slug(g.name), name: g.name, image: overrides[slug(g.name)] ?? c.image, groups: [g] })));
