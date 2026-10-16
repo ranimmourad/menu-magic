@@ -19,7 +19,7 @@ import pizza from '@/assets/restaurant-3.jpg';
 import pasta from '@/assets/restaurant-4.jpg';
 import mains from '@/assets/restaurant-5.jpg';
 
-// New image imports for the categories you want to replace
+// Vos 3 nouvelles images à uploader sur GitHub
 import boissonsFraichesImg from '@/assets/boissons-fraiches.jpg';
 import baguettesFarciesImg from '@/assets/baguettes-farcies.jpg';
 import makloubImg from '@/assets/makloub.jpg';
@@ -28,6 +28,7 @@ export type MenuItem = { name: string; price: number; description?: string };
 type Row = [string, number, string?];
 const group = (name: string, rows: Row[]) => ({ name, items: rows.map(([name, price, description]) => ({ name, price, description })) });
 export const formatPrice = (price: number) => new Intl.NumberFormat('fr-TN', { maximumFractionDigits: 1 }).format(price);
+
 const rawCategories = [
   { id: 'petits-dejeuners', name: 'Petits déjeuners', image: breakfast, groups: [group('Petits déjeuners', [
     ['Basique',8,'Café, jus, ½ eau, viennoiserie'],['Week End',11.5,'Café, jus, ½ eau, viennoiserie, omelette'],['Belge',11.5,'Café, jus, ½ eau, viennoiserie, crêpe'],['Tunisien',16,'Café, jus, ½ eau, mlawi, ricotta miel, chamia, mtabga, ojja'],['Tout salé',22,"Café, jus, ½ eau, omelette, pain farci, assiette charcuterie-fromages, œufs à l’italienne"],['Complet',20,'Café, jus, ½ eau, viennoiserie, pancake, omelette, assiette charcuterie-fromage'],['Américain',22,'Café, jus, ½ eau, viennoiserie, pancake, breakfast sandwich, œufs au bacon, assiette charcuterie-fromage']
@@ -60,9 +61,10 @@ const rawCategories = [
     ['Poisson grillé',17],['Fish and chips',18],['Poulet au grill',17],['Gratin de fruits de mer',25],['Complet escalope',17,'Escalope grillée, œuf au plat, salade, riz ou pâtes, frites'],['Complet escalope panée',18.5],['Complet Cordon bleu',20],['Complet Steak',20],['Émincé de poulet',17,'Oignons, poivrons et champignons'],['Émincé de veau',21,'Oignons, poivrons et champignons'],['Escalope de poulet à la crème',18,'Sauce moutarde, poivre ou champignons'],['Steak à la crème',24,'Sauce moutarde, poivre ou champignons']
   ])] },
 ];
+
 const slug = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/œ/g, 'oe').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-// Updated overrides to use your new uploaded images
+// Les overrides permettent de lier vos nouvelles images aux sous-rubriques séparées
 const overrides: Record<string, string> = { 
   'formules-gourmandes': r_formules, 
   'jus-de-fruits-smoothies': r_jus, 
@@ -74,8 +76,8 @@ const overrides: Record<string, string> = {
   'croques': r_croques, 
   'baguettes-farcies': baguettesFarciesImg, 
   'makloub': makloubImg,
-  'boissons-fraiches': boissonsFraichesImg
+  'boissons-fraiches': boissonsFraichesImg 
 };
 
-// Each rubrique of the printed carte becomes its own category.
+// Chaque sous-groupe devient sa propre rubrique distincte sur le site
 export const categories = rawCategories.flatMap(c => c.groups.map(g => ({ id: slug(g.name), name: g.name, image: overrides[slug(g.name)] ?? c.image, groups: [g] })));
