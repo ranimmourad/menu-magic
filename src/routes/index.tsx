@@ -18,18 +18,24 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const [active, setActive] = useState('');
+  // C'est cette variable qui controle ce qui s'affiche en bas. 
+  // Au départ, elle est null (rien ne s'affiche).
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [showTop, setShowTop] = useState(false);
+
   useEffect(() => {
-    const observer = new IntersectionObserver(entries => {
-      for (const entry of entries) if (entry.isIntersecting) setActive(entry.target.id);
-    }, { rootMargin: '-120px 0px -60% 0px', threshold: 0 });
-    document.querySelectorAll('.menu-section').forEach(section => observer.observe(section));
-    const onScroll = () => { setShowTop(window.scrollY > 600); if (window.scrollY < 400) setActive(''); };
+    const onScroll = () => { setShowTop(window.scrollY > 600); };
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => { observer.disconnect(); window.removeEventListener('scroll', onScroll); };
+    return () => { window.removeEventListener('scroll', onScroll); };
   }, []);
+
+  const handleSelect = (id: string) => {
+    setActiveCategory(id);
+  };
+
+  // On récupère l'index original pour garder le bon numéro d'ordre
+  const selectedIndex = categories.findIndex(c => c.id === activeCategory);
+
   return (
     <div id="top">
       <header className="site-header">
@@ -43,7 +49,17 @@ function Index() {
         </div>
         <div className="nav-wrap">
           <nav className="category-nav" aria-label="Catégories du menu">
-            {categories.map(category => <a key={category.id} href={`#${category.id}`} className={active === category.id ? 'active' : ''} aria-current={active === category.id ? 'location' : undefined}>{category.name}</a>)}
+            {categories.map(category => 
+              <a 
+                key={category.id} 
+                href="#menu-display" 
+                className={activeCategory === category.id ? 'active' : ''} 
+                aria-current={activeCategory === category.id ? 'location' : undefined}
+                onClick={() => handleSelect(category.id)}
+              >
+                {category.name}
+              </a>
+            )}
           </nav>
         </div>
       </header>
@@ -60,9 +76,16 @@ function Index() {
           </div>
           <span className="category-count"><Grid2X2 size={13} />{categories.length} catégories</span>
         </div>
+        
         <div className="category-grid" id="categories">
           {categories.map((category, index) => 
-            <a className="category-tile" href={`#${category.id}`} key={category.id} aria-label={`Voir ${category.name}`}>
+            <a 
+              className="category-tile" 
+              href="#menu-display" 
+              key={category.id} 
+              aria-label={`Voir ${category.name}`}
+              onClick={() => handleSelect(category.id)}
+            >
               <img src={category.image} alt={category.name} width={760} height={634} loading={index < 2 ? 'eager' : 'lazy'} />
               <div className="tile-caption">
                 <div className="min-w-0">
@@ -75,24 +98,23 @@ function Index() {
           )}
         </div>
         
-        <div className="menu-divider">
-          <p>La carte du Mabillon</p>
-          <ArrowDown size={16} className="mx-auto mt-3 text-primary" />
-        </div>
+        {/* C'est ici que la magie opère */}
+        <div id="menu-display" style={{ paddingTop: '40px' }}></div>
 
-        {categories.map((category, index) => 
-          <section id={category.id} key={category.id} className="menu-section" aria-labelledby={`${category.id}-heading`}>
+        {activeCategory ? (
+          // Si une rubrique est choisie, on n'affiche QUE ses plats
+          <section className="menu-section" aria-labelledby={`${activeCategory}-heading`}>
             <div className="menu-section-header">
               <div className="min-w-0">
-                <p className="section-number">{String(index + 1).padStart(2, '0')} / LA CARTE</p>
-                <h2 id={`${category.id}-heading`}>{category.name}</h2>
+                <p className="section-number">{String(selectedIndex + 1).padStart(2, '0')} / LA CARTE</p>
+                <h2 id={`${activeCategory}-heading`}>{categories[selectedIndex].name}</h2>
               </div>
-              <img className="section-thumbnail" src={category.image} alt="" width={100} height={76} loading="lazy" />
+              <img className="section-thumbnail" src={categories[selectedIndex].image} alt="" width={100} height={76} loading="lazy" />
             </div>
             <div className="menu-groups">
-              {category.groups.map(group => 
+              {categories[selectedIndex].groups.map(group => 
                 <div key={group.name} className="menu-group">
-                  {(category.groups.length > 1 || group.name !== category.name) && <h3>{group.name}</h3>}
+                  {(categories[selectedIndex].groups.length > 1 || group.name !== categories[selectedIndex].name) && <h3>{group.name}</h3>}
                   <div className="menu-items">
                     {group.items.map((item, itemIndex) => 
                       <div key={`${item.name}-${itemIndex}`} className="menu-item">
@@ -108,6 +130,12 @@ function Index() {
               )}
             </div>
           </section>
+        ) : (
+          // Si aucune rubrique n'est choisie, on affiche juste un message d'attente
+          <div className="menu-divider">
+            <p>Veuillez choisir une rubrique</p>
+            <ArrowDown size={16} className="mx-auto mt-3 text-primary" />
+          </div>
         )}
       </main>
 
