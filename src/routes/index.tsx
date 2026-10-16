@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from 'react';
-import { ArrowDown, ArrowUp, ArrowUpRight, Download, Grid2X2 } from 'lucide-react';
+import { ArrowUp, ArrowUpRight, Download, Grid2X2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { categories, formatPrice } from '@/lib/menu';
 import logo from '@/assets/mabillon-logo.png';
@@ -22,15 +22,16 @@ function Index() {
   const [active, setActive] = useState('');
   const [showTop, setShowTop] = useState(false);
   useEffect(() => {
-    const observer = new IntersectionObserver(entries => {
-      for (const entry of entries) if (entry.isIntersecting) setActive(entry.target.id);
-    }, { rootMargin: '-120px 0px -60% 0px', threshold: 0 });
-    document.querySelectorAll('.menu-section').forEach(section => observer.observe(section));
-    const onScroll = () => { setShowTop(window.scrollY > 600); if (window.scrollY < 400) setActive(''); };
+    const onHash = () => setActive(window.location.hash.slice(1));
+    const onScroll = () => setShowTop(window.scrollY > 600);
+    onHash(); onScroll();
+    window.addEventListener('hashchange', onHash);
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => { observer.disconnect(); window.removeEventListener('scroll', onScroll); };
+    return () => { window.removeEventListener('hashchange', onHash); window.removeEventListener('scroll', onScroll); };
   }, []);
+  useEffect(() => {
+    if (active && active !== 'top' && active !== 'categories') document.getElementById(active)?.scrollIntoView({ behavior: 'smooth' });
+  }, [active]);
   return (
     <div id="top">
       <header className="site-header">
@@ -64,7 +65,7 @@ function Index() {
             <p className="eyebrow">À la carte</p>
             <h1>Notre menu</h1>
           </div>
-          <span className="category-count"><Grid2X2 size={13} />12 catégories</span>
+          <span className="category-count"><Grid2X2 size={13} />{categories.length} rubriques</span>
         </div>
         <div className="category-grid" id="categories">
           {categories.map((category, index) => 
@@ -81,16 +82,11 @@ function Index() {
           )}
         </div>
         
-        <div className="menu-divider">
-          <p>La carte du Mabillon</p>
-          <ArrowDown size={16} className="mx-auto mt-3 text-primary" />
-        </div>
-
-        {categories.map((category, index) => 
+        {categories.filter(c => c.id === active).map((category, index) => 
           <section id={category.id} key={category.id} className="menu-section" aria-labelledby={`${category.id}-heading`}>
             <div className="menu-section-header">
               <div className="min-w-0">
-                <p className="section-number">{String(index + 1).padStart(2, '0')} / LA CARTE</p>
+                <p className="section-number">{String(categories.indexOf(category) + 1).padStart(2, "0")} / LA CARTE</p>
                 <h2 id={`${category.id}-heading`}>{category.name}</h2>
               </div>
               <img className="section-thumbnail" src={category.image} alt="" width={100} height={76} loading="lazy" />
