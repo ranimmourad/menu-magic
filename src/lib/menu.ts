@@ -6,8 +6,6 @@ import r_viennoiseries from '@/assets/r-viennoiseries.jpg';
 import r_glaces from '@/assets/r-glaces.jpg';
 import r_paninis from '@/assets/r-paninis.jpg';
 import r_croques from '@/assets/r-croques.jpg';
-import r_baguettes from '@/assets/r-baguettes.jpg';
-import r_makloub from '@/assets/r-makloub.jpg';
 import breakfast from '@/assets/cafe-0.jpg';
 import coffee from '@/assets/cafe-1.jpg';
 import drinks from '@/assets/cafe-2.jpg';
@@ -20,6 +18,11 @@ import salads from '@/assets/restaurant-2.jpg';
 import pizza from '@/assets/restaurant-3.jpg';
 import pasta from '@/assets/restaurant-4.jpg';
 import mains from '@/assets/restaurant-5.jpg';
+
+// New image imports for the categories you want to replace
+import boissonsFraichesImg from '@/assets/boissons-fraiches.jpg';
+import baguettesFarciesImg from '@/assets/baguettes-farcies.jpg';
+import makloubImg from '@/assets/makloub.jpg';
 
 export type MenuItem = { name: string; price: number; description?: string };
 type Row = [string, number, string?];
@@ -58,6 +61,21 @@ const rawCategories = [
   ])] },
 ];
 const slug = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/œ/g, 'oe').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-const overrides: Record<string, string> = { 'formules-gourmandes': r_formules, 'jus-de-fruits-smoothies': r_jus, 'milk-shakes': r_milkshakes, 'patisseries': r_patisseries, 'viennoiseries': r_viennoiseries, 'glaces': r_glaces, 'paninis': r_paninis, 'croques': r_croques, 'baguettes-farcies': r_baguettes, 'makloub': r_makloub };
+
+// Updated overrides to use your new uploaded images
+const overrides: Record<string, string> = { 
+  'formules-gourmandes': r_formules, 
+  'jus-de-fruits-smoothies': r_jus, 
+  'milk-shakes': r_milkshakes, 
+  'patisseries': r_patisseries, 
+  'viennoiseries': r_viennoiseries, 
+  'glaces': r_glaces, 
+  'paninis': r_paninis, 
+  'croques': r_croques, 
+  'baguettes-farcies': baguettesFarciesImg, 
+  'makloub': makloubImg,
+  'boissons-fraiches': boissonsFraichesImg
+};
+
 // Each rubrique of the printed carte becomes its own category.
 export const categories = rawCategories.flatMap(c => c.groups.map(g => ({ id: slug(g.name), name: g.name, image: overrides[slug(g.name)] ?? c.image, groups: [g] })));
