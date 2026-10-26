@@ -18,4 +18,4 @@
 - The browser-tab and home-screen icons in `public/` are always derived from the Le Mabillon brand mark (`src/assets/mabillon-mark.png`), never a default platform icon; regenerate both from that master whenever the mark changes so the tab and home screen stay on-brand.
 
 ## Menu du jour
-- Daily menu lives in the `daily_menu_items` table (public read, admin-only writes via `has_role`); the first account ever created is granted admin by a database trigger, so only the owner can edit at `/admin`.
+- Daily menu lives in the `daily_menu_items` table (public read, admin-only writes via `has_role`); the first account ever created is granted admin by a database trigger, so only the owner can edit at a private obscure path.
