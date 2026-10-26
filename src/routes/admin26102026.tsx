@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { dailyMenuQuery, type DailyItem } from '@/lib/daily-menu';
 import logo from '@/assets/mabillon-logo.png';
 
-export const Route = createFileRoute('/admin')({
+export const Route = createFileRoute('/admin26102026')({
   ssr: false,
   head: () => ({ meta: [
     { title: 'Espace gérant — Le Mabillon' },
