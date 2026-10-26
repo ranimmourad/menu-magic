@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { ArrowDown, ArrowUp, ArrowUpRight, Grid2X2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { categories, formatPrice } from '@/lib/menu';
+import { categories as menuCategories, formatPrice } from '@/lib/menu';
+import { dailyMenuQuery } from '@/lib/daily-menu';
 import logo from '@/assets/mabillon-logo.png';
+import dailyImg from '@/assets/menu-du-jour.jpg';
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -22,6 +25,11 @@ function Index() {
   // Au départ, elle est null (rien ne s'affiche).
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [showTop, setShowTop] = useState(false);
+  const { data: dailyItems = [] } = useQuery(dailyMenuQuery);
+  const categories = [
+    { id: 'menu-du-jour', name: 'Menu du jour', image: dailyImg, groups: [{ name: 'Menu du jour', items: dailyItems.map(d => ({ name: d.name, price: d.price, description: d.description ?? undefined })) }] },
+    ...menuCategories,
+  ];
 
   useEffect(() => {
     const onScroll = () => { setShowTop(window.scrollY > 600); };
@@ -35,6 +43,7 @@ function Index() {
 
   // On récupère l'index original pour garder le bon numéro d'ordre
   const selectedIndex = categories.findIndex(c => c.id === activeCategory);
+  const selected = categories[selectedIndex];
 
   return (
     <div id="top">
@@ -67,6 +76,24 @@ function Index() {
       <div className="logo-hero">
         <img className="hero-logo" src={logo} alt="Le Mabillon Resto & Café" fetchPriority="high" />
       </div>
+
+      {dailyItems.length > 0 && (
+        <section className="daily-menu" aria-labelledby="daily-heading">
+          <p className="eyebrow">Aujourd’hui</p>
+          <h2 id="daily-heading">Menu du jour</h2>
+          <div className="menu-items">
+            {dailyItems.map(item => (
+              <div key={item.id} className="menu-item">
+                <div className="item-row">
+                  <h4>{item.name}</h4>
+                  <p className="item-price">{formatPrice(item.price)}<span>DT</span></p>
+                </div>
+                {item.description && <p>{item.description}</p>}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <main className="menu-content">
         <div className="section-intro">
@@ -101,20 +128,20 @@ function Index() {
         {/* C'est ici que la magie opère */}
         <div id="menu-display" style={{ paddingTop: '40px' }}></div>
 
-        {activeCategory ? (
+        {activeCategory && selected ? (
           // Si une rubrique est choisie, on n'affiche QUE ses plats
           <section className="menu-section" aria-labelledby={`${activeCategory}-heading`}>
             <div className="menu-section-header">
               <div className="min-w-0">
                 <p className="section-number">{String(selectedIndex + 1).padStart(2, '0')} / LA CARTE</p>
-                <h2 id={`${activeCategory}-heading`}>{categories[selectedIndex].name}</h2>
+                <h2 id={`${activeCategory}-heading`}>{selected!.name}</h2>
               </div>
-              <img className="section-thumbnail" src={categories[selectedIndex].image} alt="" width={100} height={76} loading="lazy" />
+              <img className="section-thumbnail" src={selected!.image} alt="" width={100} height={76} loading="lazy" />
             </div>
             <div className="menu-groups">
-              {categories[selectedIndex].groups.map(group => 
+              {selected!.groups.map(group => 
                 <div key={group.name} className="menu-group">
-                  {(categories[selectedIndex].groups.length > 1 || group.name !== categories[selectedIndex].name) && <h3>{group.name}</h3>}
+                  {(selected!.groups.length > 1 || group.name !== selected!.name) && <h3>{group.name}</h3>}
                   <div className="menu-items">
                     {group.items.map((item, itemIndex) => 
                       <div key={`${item.name}-${itemIndex}`} className="menu-item">
