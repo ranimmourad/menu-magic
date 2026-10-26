@@ -1,9 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { ArrowDown, ArrowUp, ArrowUpRight, Grid2X2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { categories, formatPrice } from '@/lib/menu';
+import { categories as menuCategories, formatPrice } from '@/lib/menu';
+import { dailyMenuQuery } from '@/lib/daily-menu';
 import logo from '@/assets/mabillon-logo.png';
+import dailyImg from '@/assets/menu-du-jour.jpg';
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
@@ -22,6 +25,11 @@ function Index() {
   // Au départ, elle est null (rien ne s'affiche).
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [showTop, setShowTop] = useState(false);
+  const { data: dailyItems = [] } = useQuery(dailyMenuQuery);
+  const categories = [
+    { id: 'menu-du-jour', name: 'Menu du jour', image: dailyImg, groups: [{ name: 'Menu du jour', items: dailyItems.map(d => ({ name: d.name, price: d.price, description: d.description ?? undefined })) }] },
+    ...menuCategories,
+  ];
 
   useEffect(() => {
     const onScroll = () => { setShowTop(window.scrollY > 600); };
@@ -67,6 +75,24 @@ function Index() {
       <div className="logo-hero">
         <img className="hero-logo" src={logo} alt="Le Mabillon Resto & Café" fetchPriority="high" />
       </div>
+
+      {dailyItems.length > 0 && (
+        <section className="daily-menu" aria-labelledby="daily-heading">
+          <p className="eyebrow">Aujourd’hui</p>
+          <h2 id="daily-heading">Menu du jour</h2>
+          <div className="menu-items">
+            {dailyItems.map(item => (
+              <div key={item.id} className="menu-item">
+                <div className="item-row">
+                  <h4>{item.name}</h4>
+                  <p className="item-price">{formatPrice(item.price)}<span>DT</span></p>
+                </div>
+                {item.description && <p>{item.description}</p>}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <main className="menu-content">
         <div className="section-intro">
