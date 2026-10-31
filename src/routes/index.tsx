@@ -23,7 +23,6 @@ function Index() {
   const [showTop, setShowTop] = useState(false);
   const { data } = useQuery(menuQuery);
   
-  // FALLBACK : si Supabase n'est pas configuré, on utilise les données statiques
   const categories = data ?? staticCategories;
 
   useEffect(() => {
@@ -59,7 +58,7 @@ function Index() {
                 aria-current={activeCategory === category.id ? 'location' : undefined}
                 onClick={() => handleSelect(category.id)}
               >
-                {category.name}
+                {category.id === 'menu-du-jour' ? '☀ ' : ''}{category.name}
               </a>
             )}
           </nav>
@@ -82,7 +81,7 @@ function Index() {
         <div className="category-grid" id="categories">
           {categories.map((category, index) => 
             <a 
-              className="category-tile" 
+              className={`category-tile ${category.id === 'menu-du-jour' ? 'daily-tile' : ''}`} 
               href="#menu-display" 
               key={category.id} 
               aria-label={`Voir ${category.name}`}
@@ -91,7 +90,7 @@ function Index() {
               <img src={category.image} alt={category.name} width={760} height={634} loading={index < 2 ? 'eager' : 'lazy'} />
               <div className="tile-caption">
                 <div className="min-w-0">
-                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <span>{category.id === 'menu-du-jour' ? '☀' : String(index + 1).padStart(2, '0')}</span>
                   <h2>{category.name}</h2>
                 </div>
                 <div className="tile-arrow"><ArrowUpRight size={16} /></div>
@@ -102,11 +101,11 @@ function Index() {
         
         <div id="menu-display" style={{ paddingTop: '40px' }}></div>
 
-        {activeCategory ? (
+        {activeCategory && selectedIndex >= 0 ? (
           <section className="menu-section" aria-labelledby={`${activeCategory}-heading`}>
             <div className="menu-section-header">
               <div className="min-w-0">
-                <p className="section-number">{String(selectedIndex + 1).padStart(2, '0')} / LA CARTE</p>
+                <p className="section-number">{activeCategory === 'menu-du-jour' ? '☀' : String(selectedIndex + 1).padStart(2, '0')} / LA CARTE</p>
                 <h2 id={`${activeCategory}-heading`}>{categories[selectedIndex].name}</h2>
               </div>
               <img className="section-thumbnail" src={categories[selectedIndex].image} alt="" width={100} height={76} loading="lazy" />
