@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowDown, ArrowUp, ArrowUpRight, Grid2X2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { menuQuery, formatPrice } from '@/lib/menu';
+import { menuQuery, formatPrice, staticCategories } from '@/lib/menu';
 import logo from '@/assets/mabillon-logo.png';
 
 export const Route = createFileRoute("/")({
@@ -21,7 +21,10 @@ export const Route = createFileRoute("/")({
 function Index() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [showTop, setShowTop] = useState(false);
-  const { data: categories } = useQuery(menuQuery);
+  const { data } = useQuery(menuQuery);
+  
+  // FALLBACK : si Supabase n'est pas configuré, on utilise les données statiques
+  const categories = data ?? staticCategories;
 
   useEffect(() => {
     const onScroll = () => { setShowTop(window.scrollY > 600); };
@@ -32,26 +35,6 @@ function Index() {
   const handleSelect = (id: string) => {
     setActiveCategory(id);
   };
-
-  if (!categories) {
-    return (
-      <div id="top">
-        <header className="site-header">
-          <div className="header-top">
-            <a href="#top" aria-label="Le Mabillon — accueil">
-              <img className="header-logo" src={logo} alt="Le Mabillon Resto & Café" />
-            </a>
-            <div className="header-actions">
-              <span className="menu-label">Resto & Café · Tunis</span>
-            </div>
-          </div>
-        </header>
-        <div className="logo-hero">
-          <img className="hero-logo" src={logo} alt="Le Mabillon Resto & Café" />
-        </div>
-      </div>
-    );
-  }
 
   const selectedIndex = categories.findIndex(c => c.id === activeCategory);
 
