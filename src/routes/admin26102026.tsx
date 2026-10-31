@@ -7,7 +7,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { dailyMenuQuery, type DailyItem } from '@/lib/daily-menu';
 import { menuQuery, imageMap, type MenuCategory } from '@/lib/menu';
 import logo from '@/assets/mabillon-logo.png';
 
@@ -17,10 +16,6 @@ export const Route = createFileRoute('/admin26102026')({
     { title: 'Espace gérant — Le Mabillon' },
     { name: 'description', content: 'Gestion de la carte du Mabillon.' },
     { name: 'robots', content: 'noindex' },
-    { property: 'og:title', content: 'Espace gérant — Le Mabillon' },
-    { property: 'og:description', content: 'Gestion de la carte.' },
-    { property: 'og:type', content: 'website' },
-    { name: 'twitter:card', content: 'summary' },
   ] }),
   component: AdminPage,
 });
@@ -29,7 +24,6 @@ function AdminPage() {
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(false);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const [tab, setTab] = useState<'daily' | 'categories'>('categories');
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => { setSession(data.session); setReady(true); });
@@ -48,15 +42,7 @@ function AdminPage() {
         <Link to="/"><img src={logo} alt="Le Mabillon" className="header-logo" /></Link>
         {session && <Button variant="ghost" size="sm" onClick={() => supabase.auth.signOut()}><LogOut size={14} /> Déconnexion</Button>}
       </header>
-      {!ready ? null : !session ? <LoginForm /> : isAdmin === null ? <p className="admin-note">Chargement…</p> : isAdmin ? (
-        <>
-          <div className="admin-tabs">
-            <button className={tab === 'categories' ? 'active' : ''} onClick={() => setTab('categories')}>Catégories</button>
-            <button className={tab === 'daily' ? 'active' : ''} onClick={() => setTab('daily')}>Menu du jour</button>
-          </div>
-          {tab === 'categories' ? <CategoryEditor /> : <DailyEditor />}
-        </>
-      ) : <p className="admin-note">Ce compte n'a pas accès à l'espace gérant.</p>}
+      {!ready ? null : !session ? <LoginForm /> : isAdmin === null ? <p className="admin-note">Chargement…</p> : isAdmin ? <CategoryEditor /> : <p className="admin-note">Ce compte n'a pas accès à l'espace gérant.</p>}
     </div>
   );
 }
@@ -75,7 +61,7 @@ function LoginForm() {
   return (
     <form className="admin-card" onSubmit={submit}>
       <h1>Espace gérant</h1>
-      <p className="admin-note">Connectez-vous pour modifier la carte.</p>
+      <p className="admin-note">Connectez-vous pour modifier la carte (y compris le menu du jour).</p>
       <div className="admin-field"><Label htmlFor="email">E-mail</Label><Input id="email" type="email" required value={email} onChange={e => setEmail(e.target.value)} /></div>
       <div className="admin-field"><Label htmlFor="pw">Mot de passe</Label><Input id="pw" type="password" required value={password} onChange={e => setPassword(e.target.value)} /></div>
       {error && <p className="admin-error">{error}</p>}
@@ -96,7 +82,7 @@ function CategoryEditor() {
 
   useEffect(() => {
     if (data) setCats(data.map((c: MenuCategory, idx: number) => ({
-      id: c.id, name: c.name, image_key: c.imageKey ?? '', position: idx, collapsed: true,
+      id: c.id, name: c.name, image_key: c.imageKey ?? '', position: idx, collapsed: c.id !== 'menu-du-jour',
       items: c.groups.flatMap(g => g.items).map((it, i) => ({ id: `tmp-${c.id}-${i}`, name: it.name, description: it.description ?? '', price: String(it.price), position: i })),
     })));
   }, [data]);
@@ -155,12 +141,12 @@ function CategoryEditor() {
   return (
     <div className="admin-card admin-wide">
       <h1>Catégories de la carte</h1>
-      <p className="admin-note">Cliquez sur une catégorie pour la déplier. Modifiez, ajoutez, supprimez, réordonnez, puis enregistrez.</p>
+      <p className="admin-note">Le menu du jour est déjà déplié en haut. Modifiez, ajoutez, supprimez, réordonnez, puis enregistrez.</p>
       {cats.map(c => (
-        <div key={c.id} className="admin-cat-block">
+        <div key={c.id} className={`admin-cat-block ${c.id === 'menu-du-jour' ? 'admin-cat-highlight' : ''}`}>
           <div className="admin-cat-head" onClick={() => toggle(c.id)}>
             <span className="admin-cat-toggle">{c.collapsed ? <ChevronDown size={18} /> : <ChevronUp size={18} />}</span>
-            <span className="admin-cat-name">{c.name} <small>({c.items.length})</small></span>
+            <span className="admin-cat-name">{c.id === 'menu-du-jour' ? '☀ ' : ''}{c.name} <small>({c.items.length})</small></span>
           </div>
           {!c.collapsed && (
             <div className="admin-cat-body">
@@ -189,58 +175,6 @@ function CategoryEditor() {
       <div className="admin-actions">
         <Button variant="outline" onClick={addCategory}><Plus size={16} /> Nouvelle catégorie</Button>
         <Button onClick={save} disabled={busy}><Save size={16} /> Enregistrer la carte</Button>
-      </div>
-      {msg && <p className="admin-note">{msg}</p>}
-    </div>
-  );
-}
-
-type Draft = { id?: string; name: string; description: string; price: string };
-function DailyEditor() {
-  const qc = useQueryClient();
-  const { data } = useQuery(dailyMenuQuery);
-  const [rows, setRows] = useState<Draft[]>([]);
-  const [msg, setMsg] = useState('');
-  const [busy, setBusy] = useState(false);
-
-  useEffect(() => {
-    if (data) setRows(data.map((d: DailyItem) => ({ id: d.id, name: d.name, description: d.description ?? '', price: String(d.price) })));
-  }, [data]);
-
-  const update = (i: number, patch: Partial<Draft>) => setRows(r => r.map((row, j) => j === i ? { ...row, ...patch } : row));
-  const save = async () => {
-    setBusy(true); setMsg('');
-    const clean = rows.filter(r => r.name.trim());
-    const keep = clean.filter(r => r.id).map(r => r.id!);
-    const removed = (data ?? []).filter(d => !keep.includes(d.id)).map(d => d.id);
-    try {
-      if (removed.length) { const { error } = await supabase.from('daily_menu_items').delete().in('id', removed); if (error) throw error; }
-      for (const [position, r] of clean.entries()) {
-        const payload = { name: r.name.trim(), description: r.description.trim() || null, price: Number(r.price.replace(',', '.')) || 0, position };
-        const { error } = r.id ? await supabase.from('daily_menu_items').update(payload).eq('id', r.id) : await supabase.from('daily_menu_items').insert(payload);
-        if (error) throw error;
-      }
-      await qc.invalidateQueries({ queryKey: ['daily-menu'] });
-      setMsg('Menu du jour enregistré ✓');
-    } catch { setMsg("L'enregistrement a échoué."); }
-    setBusy(false);
-  };
-  return (
-    <div className="admin-card admin-wide">
-      <h1>Menu du jour</h1>
-      <p className="admin-note">Ajoutez, modifiez ou supprimez les plats, puis enregistrez.</p>
-      {rows.length === 0 && <p className="admin-note">Aucun plat pour l'instant.</p>}
-      {rows.map((r, i) => (
-        <div key={r.id ?? `new-${i}`} className="admin-row">
-          <Input placeholder="Nom du plat" value={r.name} onChange={e => update(i, { name: e.target.value })} />
-          <Input placeholder="Prix (DT)" inputMode="decimal" value={r.price} onChange={e => update(i, { price: e.target.value })} className="admin-price" />
-          <Input placeholder="Description (facultatif)" value={r.description} onChange={e => update(i, { description: e.target.value })} className="admin-desc" />
-          <Button variant="ghost" size="icon" aria-label="Supprimer" onClick={() => setRows(rs => rs.filter((_, j) => j !== i))}><Trash2 size={16} /></Button>
-        </div>
-      ))}
-      <div className="admin-actions">
-        <Button variant="outline" onClick={() => setRows(r => [...r, { name: '', description: '', price: '' }])}><Plus size={16} /> Ajouter un plat</Button>
-        <Button onClick={save} disabled={busy}><Save size={16} /> Enregistrer</Button>
       </div>
       {msg && <p className="admin-note">{msg}</p>}
     </div>
