@@ -51,6 +51,9 @@ type Row = [string, number, string?];
 const group = (name: string, rows: Row[]) => ({ name, items: rows.map(([name, price, description]) => ({ name, price, description })) });
 
 const rawCategories = [
+  { id: 'menu-du-jour', name: 'Menu du jour', imageKey: 'cafe-1', groups: [group('Menu du jour', [
+    ['Plat du jour - à définir', 0, 'À confirmer avec le chef'],
+  ])] },
   { id: 'petits-dejeuners', name: 'Petits déjeuners', imageKey: 'cafe-0', groups: [group('Petits déjeuners', [
     ['Basique',8,'Café, jus, ½ eau, viennoiserie'],
     ['Week End',11.5,'Café, jus, ½ eau, viennoiserie, omelette'],
@@ -159,7 +162,7 @@ const rawCategories = [
 ];
 
 const slug = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/œ/g, 'oe').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-const overrides: Record<string, string> = { 'formules-gourmandes': 'r-formules', 'jus-de-fruits-smoothies': 'r-jus', 'milk-shakes': 'r-milkshakes', 'patisseries': 'r-patisseries', 'viennoiseries': 'r-viennoiseries', 'glaces': 'r-glaces', 'paninis': 'r-paninis', 'croques': 'r-croques', 'baguettes-farcies': 'baguettes-farcies', 'makloub': 'makloub', 'boissons-fraiches': 'boissons-fraiches' };
+const overrides: Record<string, string> = { 'formules-gourmandes': 'r-formules', 'jus-de-fruits-smoothies': 'r-jus', 'milk-shakes': 'r-milkshakes', 'patisseries': 'r-patisseries', 'viennoiseries': 'r-viennoiseries', 'glaces': 'r-glaces', 'paninis': 'r-paninis', 'croques': 'r-croques', 'baguettes-farcies': 'baguettes-farcies', 'makloub': 'makloub', 'boissons-fraiches': 'boissons-fraiches', 'menu-du-jour': 'cafe-1' };
 
 export const staticCategories: MenuCategory[] = rawCategories.flatMap(c => c.groups.map(g => ({
   id: slug(g.name),
