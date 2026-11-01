@@ -187,9 +187,9 @@ export const menuQuery = queryOptions({
       return cats.map(c => ({
         id: c.id,
         name: c.name,
-        imageKey: c.image_key ?? undefined,
+        ...(c.image_key ? { imageKey: c.image_key } : {}),
         image: resolveImage(c.image_key, staticCategories.find(s => s.id === c.id)?.image ?? ''),
-        groups: [{ name: c.name, items: itemList.filter(i => i.category_id === c.id).map(i => ({ name: i.name, price: Number(i.price), description: i.description ?? undefined })) }],
+        groups: [{ name: c.name, items: itemList.filter(i => i.category_id === c.id).map(i => ({ name: i.name, price: Number(i.price), ...(i.description ? { description: i.description } : {}) })) }],
       }));
     } catch {
       return staticCategories;
