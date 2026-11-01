@@ -102,19 +102,19 @@ function Index() {
         
         <div id="menu-display" style={{ paddingTop: '40px' }}></div>
 
-        {activeCategory && selectedIndex >= 0 ? (
+        {activeCategory && selected ? (
           <section className="menu-section" aria-labelledby={`${activeCategory}-heading`}>
             <div className="menu-section-header">
               <div className="min-w-0">
                 <p className="section-number">{activeCategory === 'menu-du-jour' ? '☀' : String(selectedIndex + 1).padStart(2, '0')} / LA CARTE</p>
-                <h2 id={`${activeCategory}-heading`}>{categories[selectedIndex].name}</h2>
+                <h2 id={`${activeCategory}-heading`}>{selected.name}</h2>
               </div>
-              <img className="section-thumbnail" src={categories[selectedIndex].image} alt="" width={100} height={76} loading="lazy" />
+              <img className="section-thumbnail" src={selected.image} alt="" width={100} height={76} loading="lazy" />
             </div>
             <div className="menu-groups">
-              {categories[selectedIndex].groups.map(group => 
+              {selected.groups.map(group =>
                 <div key={group.name} className="menu-group">
-                  {(categories[selectedIndex].groups.length > 1 || group.name !== categories[selectedIndex].name) && <h3>{group.name}</h3>}
+                  {(selected.groups.length > 1 || group.name !== selected.name) && <h3>{group.name}</h3>}
                   <div className="menu-items">
                     {group.items.map((item, itemIndex) => 
                       <div key={`${item.name}-${itemIndex}`} className="menu-item">
