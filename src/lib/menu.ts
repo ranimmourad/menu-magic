@@ -48,7 +48,7 @@ const resolveImage = (key: string | null | undefined, fallback: string) => {
 };
 
 type Row = [string, number, string?];
-const group = (name: string, rows: Row[]) => ({ name, items: rows.map(([name, price, description]) => ({ name, price, description })) });
+const group = (name: string, rows: Row[]): MenuGroup => ({ name, items: rows.map(([name, price, description]) => description === undefined ? { name, price } : { name, price, description }) });
 
 const rawCategories = [
   { id: 'menu-du-jour', name: 'Menu du jour', imageKey: 'cafe-1', groups: [group('Menu du jour', [
@@ -176,16 +176,16 @@ export const menuQuery = queryOptions({
   queryKey: ['menu'],
   queryFn: async (): Promise<MenuCategory[]> => {
     try {
-      const { data: cats, error } = await supabase.from('categories').order('position').select('*');
+      const { data: cats, error } = await supabase.from('categories').select('*').order('position');
       if (error || !cats || cats.length === 0) return staticCategories;
-      const { data: items } = await supabase.from('menu_items').order('position').select('*');
+      const { data: items } = await supabase.from('menu_items').select('*').order('position');
       const itemList = items ?? [];
       return cats.map(c => ({
         id: c.id,
         name: c.name,
         imageKey: c.image_key ?? undefined,
         image: resolveImage(c.image_key, staticCategories.find(s => s.id === c.id)?.image ?? ''),
-        groups: [{ name: c.name, items: itemList.filter(i => i.category_id === c.id).map(i => ({ name: i.name, price: Number(i.price), description: i.description ?? undefined })) }],
+        groups: [{ name: c.name, items: itemList.filter(i => i.category_id === c.id).map(i => i.description ? { name: i.name, price: Number(i.price), description: i.description } : { name: i.name, price: Number(i.price) }) }],
       }));
     } catch {
       return staticCategories;

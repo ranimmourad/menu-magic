@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { categories, formatPrice } from './menu';
+import { staticCategories as categories, formatPrice } from './menu';
 
 describe('Original PDF menu', () => {
   it('preserves the Basique breakfast price of 8 DT', () => {

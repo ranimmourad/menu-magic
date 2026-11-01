@@ -36,6 +36,7 @@ function Index() {
   };
 
   const selectedIndex = categories.findIndex(c => c.id === activeCategory);
+  const selected = selectedIndex >= 0 ? categories[selectedIndex] : undefined;
 
   return (
     <div id="top">
