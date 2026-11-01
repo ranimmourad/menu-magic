@@ -180,9 +180,9 @@ export const menuQuery = queryOptions({
   refetchOnWindowFocus: true,
   queryFn: async (): Promise<MenuCategory[]> => {
     try {
-      const { data: cats, error } = await supabase.from('categories').order('position').select('*');
+      const { data: cats, error } = await supabase.from('categories').select('*').order('position');
       if (error || !cats || cats.length === 0) return staticCategories;
-      const { data: items } = await supabase.from('menu_items').order('position').select('*');
+      const { data: items } = await supabase.from('menu_items').select('*').order('position');
       const itemList = items ?? [];
       return cats.map(c => ({
         id: c.id,
