@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      categories: {
+        Row: {
+          id: string
+          image_key: string | null
+          name: string
+          position: number
+        }
+        Insert: {
+          id: string
+          image_key?: string | null
+          name: string
+          position?: number
+        }
+        Update: {
+          id?: string
+          image_key?: string | null
+          name?: string
+          position?: number
+        }
+        Relationships: []
+      }
       daily_menu_items: {
         Row: {
           created_at: string
@@ -40,6 +61,41 @@ export type Database = {
           price?: number
         }
         Relationships: []
+      }
+      menu_items: {
+        Row: {
+          category_id: string
+          description: string | null
+          id: string
+          name: string
+          position: number
+          price: number
+        }
+        Insert: {
+          category_id: string
+          description?: string | null
+          id?: string
+          name: string
+          position?: number
+          price?: number
+        }
+        Update: {
+          category_id?: string
+          description?: string | null
+          id?: string
+          name?: string
+          position?: number
+          price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "menu_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
