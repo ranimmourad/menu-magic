@@ -23,6 +23,7 @@ import mains from '@/assets/restaurant-5.jpg';
 import boissonsFraichesImg from '@/assets/boissons-fraiches.jpg';
 import baguettesFarciesImg from '@/assets/baguettes-farcies.jpg';
 import makloubImg from '@/assets/makloub.jpg';
+import menuDuJourImg from '@/assets/menu-du-jour.jpg';
 
 export type MenuItem = { name: string; price: number; description?: string };
 export type MenuGroup = { name: string; items: MenuItem[] };
@@ -39,6 +40,7 @@ export const imageMap: Record<string, string> = {
   'restaurant-0': sandwiches, 'restaurant-1': eggs, 'restaurant-2': salads,
   'restaurant-3': pizza, 'restaurant-4': pasta, 'restaurant-5': mains,
   'boissons-fraiches': boissonsFraichesImg, 'baguettes-farcies': baguettesFarciesImg, 'makloub': makloubImg,
+  'menu-du-jour': menuDuJourImg,
 };
 
 const resolveImage = (key: string | null | undefined, fallback: string) => {
@@ -48,10 +50,10 @@ const resolveImage = (key: string | null | undefined, fallback: string) => {
 };
 
 type Row = [string, number, string?];
-const group = (name: string, rows: Row[]): MenuGroup => ({ name, items: rows.map(([name, price, description]) => description === undefined ? { name, price } : { name, price, description }) });
+const group = (name: string, rows: Row[]) => ({ name, items: rows.map(([name, price, description]) => ({ name, price, description })) });
 
 const rawCategories = [
-  { id: 'menu-du-jour', name: 'Menu du jour', imageKey: 'cafe-1', groups: [group('Menu du jour', [
+  { id: 'menu-du-jour', name: 'Menu du jour', imageKey: 'menu-du-jour', groups: [group('Menu du jour', [
     ['Plat du jour - à définir', 0, 'À confirmer avec le chef'],
   ])] },
   { id: 'petits-dejeuners', name: 'Petits déjeuners', imageKey: 'cafe-0', groups: [group('Petits déjeuners', [
@@ -162,7 +164,7 @@ const rawCategories = [
 ];
 
 const slug = (s: string) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/œ/g, 'oe').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-const overrides: Record<string, string> = { 'formules-gourmandes': 'r-formules', 'jus-de-fruits-smoothies': 'r-jus', 'milk-shakes': 'r-milkshakes', 'patisseries': 'r-patisseries', 'viennoiseries': 'r-viennoiseries', 'glaces': 'r-glaces', 'paninis': 'r-paninis', 'croques': 'r-croques', 'baguettes-farcies': 'baguettes-farcies', 'makloub': 'makloub', 'boissons-fraiches': 'boissons-fraiches', 'menu-du-jour': 'cafe-1' };
+const overrides: Record<string, string> = { 'formules-gourmandes': 'r-formules', 'jus-de-fruits-smoothies': 'r-jus', 'milk-shakes': 'r-milkshakes', 'patisseries': 'r-patisseries', 'viennoiseries': 'r-viennoiseries', 'glaces': 'r-glaces', 'paninis': 'r-paninis', 'croques': 'r-croques', 'baguettes-farcies': 'baguettes-farcies', 'makloub': 'makloub', 'boissons-fraiches': 'boissons-fraiches', 'menu-du-jour': 'menu-du-jour' };
 
 export const staticCategories: MenuCategory[] = rawCategories.flatMap(c => c.groups.map(g => ({
   id: slug(g.name),
@@ -176,16 +178,16 @@ export const menuQuery = queryOptions({
   queryKey: ['menu'],
   queryFn: async (): Promise<MenuCategory[]> => {
     try {
-      const { data: cats, error } = await supabase.from('categories').select('*').order('position');
+      const { data: cats, error } = await supabase.from('categories').order('position').select('*');
       if (error || !cats || cats.length === 0) return staticCategories;
-      const { data: items } = await supabase.from('menu_items').select('*').order('position');
+      const { data: items } = await supabase.from('menu_items').order('position').select('*');
       const itemList = items ?? [];
       return cats.map(c => ({
         id: c.id,
         name: c.name,
-        ...(c.image_key ? { imageKey: c.image_key } : {}),
+        imageKey: c.image_key ?? undefined,
         image: resolveImage(c.image_key, staticCategories.find(s => s.id === c.id)?.image ?? ''),
-        groups: [{ name: c.name, items: itemList.filter(i => i.category_id === c.id).map(i => i.description ? { name: i.name, price: Number(i.price), description: i.description } : { name: i.name, price: Number(i.price) }) }],
+        groups: [{ name: c.name, items: itemList.filter(i => i.category_id === c.id).map(i => ({ name: i.name, price: Number(i.price), description: i.description ?? undefined })) }],
       }));
     } catch {
       return staticCategories;
