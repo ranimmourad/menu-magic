@@ -176,6 +176,8 @@ export const staticCategories: MenuCategory[] = rawCategories.flatMap(c => c.gro
 
 export const menuQuery = queryOptions({
   queryKey: ['menu'],
+  refetchInterval: 10000, // Rafraîchit automatiquement toutes les 10 secondes
+  refetchOnWindowFocus: true, // Rafraîchit quand l'utilisateur revient sur l'onglet
   queryFn: async (): Promise<MenuCategory[]> => {
     try {
       const { data: cats, error } = await supabase.from('categories').order('position').select('*');
