@@ -171,7 +171,7 @@ export const staticCategories: MenuCategory[] = rawCategories.flatMap(c => c.gro
   name: g.name,
   imageKey: overrides[slug(g.name)] ?? c.imageKey ?? '',
   image: imageMap[overrides[slug(g.name)] ?? c.imageKey ?? ''] ?? imageMap[c.imageKey ?? ''] ?? '',
-  groups: [g],
+  groups: [g as MenuGroup],
 })));
 
 export const menuQuery = queryOptions({
