@@ -97,7 +97,11 @@ function CategoryEditor() {
     const items = [...c.items];
     const ni = idx + dir;
     if (ni < 0 || ni >= items.length) return c;
-    [items[idx], items[ni]] = [items[ni], items[idx]];
+    const a = items[idx];
+    const b = items[ni];
+    if (!a || !b) return c;
+    items[idx] = b;
+    items[ni] = a;
     return { ...c, items };
   }));
 
