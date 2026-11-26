@@ -13,6 +13,7 @@
 - Keep the complete menu in the browser-safe `src/lib/menu.ts` data module; the page renders both navigation and sections from the same categories to prevent drift.
 - Use hash anchors for this explicitly requested single-page menu; category cards and navbar links must target the same section IDs.
 - Keep all reusable visual styling and semantic palette tokens in `src/styles.css` so the mobile-first layout remains consistent.
+- Enforce `menu_items` writes with `has_role(auth.uid(), 'admin')` in database policies while retaining public reads, so non-managers cannot bypass the editor's access checks.
 
 ## Brand icons
 - The browser-tab and home-screen icons in `public/` are always derived from the Le Mabillon brand mark (`src/assets/mabillon-mark.png`), never a default platform icon; regenerate both from that master whenever the mark changes so the tab and home screen stay on-brand.
